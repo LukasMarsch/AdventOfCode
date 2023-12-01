@@ -1,4 +1,5 @@
 ﻿using System.Text;
+<<<<<<< HEAD
 
 public class Program {
     static readonly string[] numstr = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
