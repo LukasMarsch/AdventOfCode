@@ -1,40 +1,130 @@
 ﻿using System.Text;
-<<<<<<< HEAD
 
 public class Program {
     static readonly string[] numstr = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
     public static void Main() {
-        StreamReader sr = new StreamReader("in.t");
+        StreamReader sr = new StreamReader("in.txt");
         string line = sr.ReadLine();
         StringBuilder number = new StringBuilder();
+        int res = 0;
         while(null != line) {
+
+            // find out which numbers are in there
             bool[] cont = new bool[9];
+            Array.ForEach(cont, (x) => x = false);
             if(ContainsNumStr(line)) {
                 for(int i = 0; i < numstr.Length; i++) {
                     if(line.Contains(numstr[i]))
+                    {
                         cont[i] = true;
+                    }
                     else
                         cont[i] = false;
                 }
             }
 
-            //TODO: String matching zur index suche
-            // for k = 0; k < cont.length; k++) {
-            //      if(cont[k]){
-            //           currZahl = numstr[k]
-            //           für i = 0; i< length i++) {
-            //               repeat = true;
-            //               for(n = 0; repeat & n < numstr.Length; n++) {
-            //                  repeat = numstr[n] == line[n+i];
-            //               } 
-            //                
-            //           }
-            //
-            //      }
-            // }
+            int[] numStrFound = TrueIndices(cont);
+            //foreach character in the line
+            bool haventFoundYet = true;
+            for(int i = 0; i < line.Length && haventFoundYet; i++)
+            {
+                // check if it's a number
+                if (line[i] >= '1' && line[i] <= '9')
+                {
+                    number.Append(line[i]);
+                    haventFoundYet = false;
+                }
+                // or check if it's a number
+                else
+                {
+                    // for each number we found in the line
+                    foreach(int numWeFound in numStrFound)
+                    {
+                        bool mightStillBe = true;
+                        
+                        // for each letter in the number until it's not
+                        for(int letter = 0; letter < numstr[numWeFound].Length & mightStillBe; letter++)
+                        {
+                            // is it?
+                            if(i + letter < line.Length)
+                            {
+                               mightStillBe = numstr[numWeFound][letter] == line[i+letter];
+                            }
+                            else
+                            {
+                                mightStillBe = false;
+                            }
+                        }
+                        // if it still is, it must be
+                        if(mightStillBe)
+                        {
+                            // so add it
+                            number.Append(numWeFound + 1);
+                            // and we can break from the outerest loop
+                            haventFoundYet = false;
+                        }
+                    }
+                }
+            }
 
+            haventFoundYet = true;
+            // for each number in reverser order
+            for(int i = line.Length - 1; haventFoundYet &&  i >= 0; i--)
+            {
+                // check if it's a number
+                if (line[i] >= '1' && line[i] <= '9')
+                {
+                    number.Append(line[i]);
+                    haventFoundYet = false;
+                }
+                // or check if it's a number
+                else
+                {
+                    // for each number we found in the line
+                    foreach (int numWeFound in numStrFound)
+                    {
+                        // for each of its letters
+                        bool mightStillBe = true;
+                        for(int letter = 0; mightStillBe && letter < numstr[numWeFound].Length; letter++)
+                        {
+                            // check if they match
+                            if(i+ letter < line.Length)
+                                mightStillBe = numstr[numWeFound][letter] == line[i + letter];
+                            else
+                            {
+                                mightStillBe = false;
+                            }
+                        }
+                        // and if all do
+                        if(mightStillBe)
+                        {
+                            // add and break out
+                            number.Append(numWeFound + 1);
+                            haventFoundYet = false;
+                        }
+                    }
+                }
+            }
+            int t;
+            Console.WriteLine(Int32.TryParse(number.ToString(), out t) ? t : $"Error parsing {t}");
+            res += t; 
+            number.Clear();
             line = sr.ReadLine();
         }
+        Console.WriteLine($">>>>> {res}");
+    }
+
+    public static int[] TrueIndices(bool[] input)
+    {
+        List<int> correct = new List<int>();
+        for(int i = 0; i < input.Length; i++)
+        {
+            if (input[i])
+            {
+                correct.Add(i);
+            }
+        }
+        return correct.ToArray();
     }
 
     public static bool ContainsNumStr(string line) {
