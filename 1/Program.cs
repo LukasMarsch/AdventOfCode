@@ -8,7 +8,6 @@ public class Program {
         StringBuilder number = new StringBuilder();
         int res = 0;
         while(null != line) {
-
             // find out which numbers are in there
             bool[] cont = new bool[9];
             Array.ForEach(cont, (x) => x = false);
